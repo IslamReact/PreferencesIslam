@@ -18,7 +18,8 @@ class PreferencesViewModel : ViewModel() {
         _userName.value = name
     }
 
-    fun updateRepetitions(phoneNumber: Int) {
+    fun updatePhoneNumber(phoneNumber: Int) {
         _phoneNumber.value = phoneNumber
     }
+
 }

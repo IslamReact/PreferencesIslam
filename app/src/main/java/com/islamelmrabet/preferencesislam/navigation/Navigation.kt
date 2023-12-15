@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.islamelmrabet.preferencesislam.ui.screens.MainScreen
+import com.islamelmrabet.preferencesislam.ui.screens.SplashScreen
 import com.islamelmrabet.preferencesislam.ui.screens.onBoarding.OnBoardingScreen
 import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 
@@ -15,6 +16,9 @@ fun Navigation(preferencesViewModel : PreferencesViewModel) {
         navController = navController,
         startDestination = Routes.SplashScreen.route,
     ) {
+        composable(Routes.SplashScreen.route) {
+            SplashScreen(navController)
+        }
         composable(Routes.MainScreen.route) {
             MainScreen(navController, preferencesViewModel)
         }
