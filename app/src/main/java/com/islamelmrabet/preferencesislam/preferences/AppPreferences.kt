@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.islamelmrabet.preferencesislam.Data.User
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.map
 class AppPreferences (val context: Context){
     companion object {
         val NAME = stringPreferencesKey("NAME")
-        val PHONE = stringPreferencesKey("PHONE")
+        val PHONE = intPreferencesKey("PHONE")
     }
 
     private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = "preferences")
@@ -27,7 +28,7 @@ class AppPreferences (val context: Context){
     fun loadUser() = context.dataStore.data.map{ preferences ->
         User(
             name = preferences[NAME] ?: "",
-            phoneNumber = preferences[PHONE] ?: "",
+            phoneNumber = preferences[PHONE] ?: 0,
         )
     }
 }

@@ -32,6 +32,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -49,10 +50,15 @@ import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
-        val userName by preferencesViewModel.userName.observeAsState(initial = "")
-        val userPhone by preferencesViewModel.phoneNumber.observeAsState(0)
 
-        Scaffold(
+    val userData by preferencesViewModel.user.observeAsState()
+
+    // Cargar datos del usuario al inicializar la pantalla
+    LaunchedEffect(Unit) {
+        preferencesViewModel.loadUser()
+    }
+
+    Scaffold(
             content = {
                 Column(
                     modifier = Modifier
@@ -60,8 +66,8 @@ fun MainScreen(navController: NavHostController, preferencesViewModel: Preferenc
                         .background(MaterialTheme.colorScheme.inversePrimary)
                         .padding(it),
                 ) {
-                    Text(text ="Usuario: $userName")
-                    Text(text ="Telefono: $userPhone")
+                    Text("Nombre: ${userData?.name}")
+                    Text("Teléfono: ${userData?.phoneNumber}")
                 }
             },
             bottomBar = {
@@ -82,6 +88,7 @@ fun MainScreen(navController: NavHostController, preferencesViewModel: Preferenc
                         },
                         content = {
                             Text(text = "Cerrar sesion")
+                            preferencesViewModel.saveUser("", 0)
                         }
                     )
 

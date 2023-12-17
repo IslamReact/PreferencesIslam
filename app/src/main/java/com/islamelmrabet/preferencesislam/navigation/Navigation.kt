@@ -17,7 +17,7 @@ fun Navigation(preferencesViewModel : PreferencesViewModel) {
         startDestination = Routes.SplashScreen.route,
     ) {
         composable(Routes.SplashScreen.route) {
-            SplashScreen(navController)
+            SplashScreen(navController, preferencesViewModel)
         }
         composable(Routes.MainScreen.route) {
             MainScreen(navController, preferencesViewModel)

@@ -31,10 +31,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.islamelmrabet.preferencesislam.Data.User
 import com.islamelmrabet.preferencesislam.R
 import com.islamelmrabet.preferencesislam.navigation.Routes
 import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
@@ -52,9 +55,17 @@ import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
-    val userName by preferencesViewModel.userName.observeAsState(initial = "")
-    val userPhone by preferencesViewModel.phoneNumber.observeAsState(0)
-    val isButtonEnabled = userName.isNotBlank() && userPhone.toString().isNotBlank()
+    val userData by preferencesViewModel.user.observeAsState()
+
+    // Cargar datos del usuario al inicializar la pantalla
+    LaunchedEffect(Unit) {
+        preferencesViewModel.loadUser()
+    }
+
+    var userName by remember { mutableStateOf("") }
+    var userPhone by remember { mutableStateOf("") }
+    var isButtonEnabled = userName.isNotBlank() && userPhone.isNotBlank()
+
 
     Scaffold(
         content = {
@@ -72,7 +83,6 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    // Frase motivadora
                     Text(
                         text = "Bienvenido!",
                         modifier = Modifier
@@ -89,22 +99,15 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                 ) {
                     OutlinedTextField(
                         value = userName,
-                        onValueChange = { preferencesViewModel.updateUserName(it) },
+                        onValueChange = { userName = it },
                         label = {
-                            Text(
-                                text = "Introduce tu nombre",
-                            )
+                            Text(text = "Introduce tu nombre")
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = userPhone.toString(),
-                        onValueChange = { value ->
-                            val newValue = value.toIntOrNull() ?: 0
-                            if (newValue >= 0) {
-                                preferencesViewModel.updatePhoneNumber(newValue)
-                            }
-                        },
+                        value = userPhone,
+                        onValueChange = { userPhone = it },
                         label = {
                             Text(
                                 text = "Introduce tu teléfono",
@@ -134,6 +137,7 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                     onClick = {
                         if (isButtonEnabled) {
                             navController.navigate("main_screen")
+                            preferencesViewModel.saveUser(userName, userPhone.toIntOrNull() ?: 0)
                         }
                     },
                     enabled = isButtonEnabled,

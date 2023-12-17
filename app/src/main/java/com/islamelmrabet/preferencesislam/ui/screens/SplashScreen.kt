@@ -11,26 +11,35 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.islamelmrabet.preferencesislam.Data.User
 import com.islamelmrabet.preferencesislam.R
-import com.islamelmrabet.preferencesislam.navigation.Routes
+import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
-    LaunchedEffect(key1 = true) {
-        delay(3000)
-        navController.popBackStack() // Evitar volver a la Splash Screen
-        navController.navigate(Routes.OnBoardingScreen.route)
+fun SplashScreen(navController: NavHostController,preferencesViewModel: PreferencesViewModel) {
+
+    LaunchedEffect(Unit) {
+        preferencesViewModel.loadUser()
+    }
+
+    val userData by preferencesViewModel.user.observeAsState()
+    LaunchedEffect(userData) {
+        delay(3000) // Duración de la SplashScreen
+        navController.navigate(
+            if (userData?.name.isNullOrEmpty()) "OnBoarding_screen" else "main_screen"
+        )
     }
 
     Splash()
