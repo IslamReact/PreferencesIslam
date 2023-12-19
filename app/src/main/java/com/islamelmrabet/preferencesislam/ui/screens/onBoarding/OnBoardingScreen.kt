@@ -55,16 +55,10 @@ import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
-    val userData by preferencesViewModel.user.observeAsState()
+    val userName by preferencesViewModel.name.observeAsState("")
+    val userPhone by preferencesViewModel.numberPhone.observeAsState(0)
 
-    // Cargar datos del usuario al inicializar la pantalla
-    LaunchedEffect(Unit) {
-        preferencesViewModel.loadUser()
-    }
-
-    var userName by remember { mutableStateOf("") }
-    var userPhone by remember { mutableStateOf("") }
-    var isButtonEnabled = userName.isNotBlank() && userPhone.isNotBlank()
+    var isButtonEnabled = userName.isNotBlank() && userPhone != 0
 
 
     Scaffold(
@@ -99,15 +93,15 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                 ) {
                     OutlinedTextField(
                         value = userName,
-                        onValueChange = { userName = it },
+                        onValueChange = { preferencesViewModel.onUserNameChanged(it) },
                         label = {
                             Text(text = "Introduce tu nombre")
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = userPhone,
-                        onValueChange = { userPhone = it },
+                        value = userPhone.toString(),
+                        onValueChange = { preferencesViewModel.onUserPhoneChanged(it.toInt()) },
                         label = {
                             Text(
                                 text = "Introduce tu teléfono",
@@ -137,7 +131,7 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                     onClick = {
                         if (isButtonEnabled) {
                             navController.navigate("main_screen")
-                            preferencesViewModel.saveUser(userName, userPhone.toIntOrNull() ?: 0)
+                            preferencesViewModel.saveUser(userName,userPhone)
                         }
                     },
                     enabled = isButtonEnabled,

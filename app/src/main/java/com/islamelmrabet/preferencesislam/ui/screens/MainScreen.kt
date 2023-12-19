@@ -44,16 +44,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.islamelmrabet.preferencesislam.Data.User
 import com.islamelmrabet.preferencesislam.R
 import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController, preferencesViewModel: PreferencesViewModel) {
+    val userName by preferencesViewModel.name.observeAsState("")
+    val userPhone by preferencesViewModel.numberPhone.observeAsState(0)
 
-    val userData by preferencesViewModel.user.observeAsState()
-
-    // Cargar datos del usuario al inicializar la pantalla
     LaunchedEffect(Unit) {
         preferencesViewModel.loadUser()
     }
@@ -66,8 +66,8 @@ fun MainScreen(navController: NavHostController, preferencesViewModel: Preferenc
                         .background(MaterialTheme.colorScheme.inversePrimary)
                         .padding(it),
                 ) {
-                    Text("Nombre: ${userData?.name}")
-                    Text("Teléfono: ${userData?.phoneNumber}")
+                    Text("Nombre: $userName")
+                    Text("Telfono: $userPhone")
                 }
             },
             bottomBar = {
@@ -85,10 +85,11 @@ fun MainScreen(navController: NavHostController, preferencesViewModel: Preferenc
                     Button(
                         onClick = {
                             navController.popBackStack()
+                            preferencesViewModel.onUserPhoneChanged(0)
+                            preferencesViewModel.onUserNameChanged("")
                         },
                         content = {
                             Text(text = "Cerrar sesion")
-                            preferencesViewModel.saveUser("", 0)
                         }
                     )
 

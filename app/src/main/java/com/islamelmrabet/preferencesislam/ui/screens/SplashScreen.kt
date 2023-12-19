@@ -30,15 +30,12 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavHostController,preferencesViewModel: PreferencesViewModel) {
 
-    LaunchedEffect(Unit) {
-        preferencesViewModel.loadUser()
-    }
+    val userData by preferencesViewModel.name.observeAsState()
 
-    val userData by preferencesViewModel.user.observeAsState()
     LaunchedEffect(userData) {
         delay(3000) // Duración de la SplashScreen
         navController.navigate(
-            if (userData?.name.isNullOrEmpty()) "OnBoarding_screen" else "main_screen"
+            if (userData.isNullOrEmpty()) "OnBoarding_screen" else "main_screen"
         )
     }
 
