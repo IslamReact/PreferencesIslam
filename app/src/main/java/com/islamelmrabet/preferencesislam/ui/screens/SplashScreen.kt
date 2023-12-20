@@ -24,19 +24,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.islamelmrabet.preferencesislam.Data.User
 import com.islamelmrabet.preferencesislam.R
+import com.islamelmrabet.preferencesislam.preferences.AppPreferences
 import com.islamelmrabet.preferencesislam.viewmodel.PreferencesViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavHostController,preferencesViewModel: PreferencesViewModel) {
+    val userName by preferencesViewModel.name.observeAsState("")
 
-    val userData by preferencesViewModel.name.observeAsState()
-
-    LaunchedEffect(userData) {
-        delay(3000) // Duración de la SplashScreen
-        navController.navigate(
-            if (userData.isNullOrEmpty()) "OnBoarding_screen" else "main_screen"
-        )
+    LaunchedEffect(Unit) {
+        preferencesViewModel.navigateBasedOnUser(navController)
     }
 
     Splash()

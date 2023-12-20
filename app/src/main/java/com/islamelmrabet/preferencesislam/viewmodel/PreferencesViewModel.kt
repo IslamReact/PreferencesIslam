@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.islamelmrabet.preferencesislam.Data.User
 import com.islamelmrabet.preferencesislam.preferences.AppPreferences
 import kotlinx.coroutines.flow.collect
@@ -39,6 +40,20 @@ class PreferencesViewModel(application: Application) : AndroidViewModel(applicat
             preferences.loadUser().collect { user ->
                 _name.value = user.name
                 _numberPhone.value = user.phoneNumber
+            }
+        }
+    }
+
+    fun navigateBasedOnUser(navController: NavController) {
+        viewModelScope.launch {
+            preferences.loadUser().collect { user ->
+                if (user.name.isNotEmpty() && user.phoneNumber != 0) {
+                    // Usuario guardado, navegar a la pantalla principal
+                    navController.navigate("main_screen")
+                } else {
+                    // No se encontró un usuario guardado, navegar a la pantalla de OnBoarding
+                    navController.navigate("OnBoarding_screen")
+                }
             }
         }
     }

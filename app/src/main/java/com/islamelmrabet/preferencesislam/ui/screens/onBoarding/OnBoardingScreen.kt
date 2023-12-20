@@ -59,6 +59,7 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
     val userPhone by preferencesViewModel.numberPhone.observeAsState(0)
 
     var isButtonEnabled = userName.isNotBlank() && userPhone != 0
+    var isError = false
 
 
     Scaffold(
@@ -101,15 +102,21 @@ fun OnBoardingScreen(navController: NavHostController, preferencesViewModel: Pre
                     )
                     OutlinedTextField(
                         value = userPhone.toString(),
-                        onValueChange = { preferencesViewModel.onUserPhoneChanged(it.toInt()) },
-                        label = {
-                            Text(
-                                text = "Introduce tu teléfono",
-                            )
+                        onValueChange = { newValue ->
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                isError = newValue.length > 9
+                                if (!isError) {
+                                    preferencesViewModel.onUserPhoneChanged(newValue.toIntOrNull() ?: 0)
+                                }
+                            }
                         },
+                        label = { Text("Introduce tu teléfono") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = isError
                     )
+
                 }
             }
         },

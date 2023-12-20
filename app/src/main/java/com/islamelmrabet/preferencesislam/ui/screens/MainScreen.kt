@@ -85,6 +85,7 @@ fun MainScreen(navController: NavHostController, preferencesViewModel: Preferenc
                     Button(
                         onClick = {
                             navController.popBackStack()
+                            preferencesViewModel.saveUser("",0)
                             preferencesViewModel.onUserPhoneChanged(0)
                             preferencesViewModel.onUserNameChanged("")
                         },
